@@ -1,0 +1,7 @@
+import os
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+ADMIN_GROUP_ID = "GROUP_ID_HERE"
+
+OWNER_ID = "OWNER_ID_HERE"
