@@ -21,7 +21,8 @@ def send_message(chat_id, text):
 @app.route("/receiveUpdate", methods=["POST"])
 def receive_update():
     data = request.json
-
+    print(data)
+    return {"ok": True}
     if data["update"]["type"] == "NewMessage":
         chat_id = data["update"]["chat_id"]
 
