@@ -23,12 +23,13 @@ def receive_update():
     data = request.json
     print(data)
     return {"ok": True}
-    if data["update"]["type"] == "NewMessage":
-        chat_id = data["update"]["chat_id"]
+if data["update"]["type"] == "NewMessage":
+    chat_id = data["update"]["chat_id"]
 
+    if chat_id == "g0IZ3is000677376b8e6cfd1eec21a99":
         send_message(
             chat_id,
-            "✅ ربات آنلاین است."
+            "✅ پیام گروه دریافت شد"
         )
 
     return {"ok": True}
