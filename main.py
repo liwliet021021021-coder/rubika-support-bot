@@ -23,11 +23,11 @@ def receive_update():
     data = request.json
     print(data)
 
-    if data["update"]["type"] == "NewMessage":
-        chat_id = data["update"]["chat_id"]
+if data["update"]["type"] == "NewMessage":
+    chat_id = data["update"]["chat_id"]
 
-        if chat_id == "g0IZ3is000677376b8e6cfd1eec21a99":
-def send_message(chat_id, text):
+    if chat_id.startswith("b0"):
+        send_message(chat_id d, chat_id, text):
     url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
 
     r = requests.post(
