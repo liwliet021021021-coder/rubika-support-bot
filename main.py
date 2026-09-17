@@ -9,27 +9,6 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 def send_message(chat_id, text):
     url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
 
-    requests.post(
-        url,
-        json={
-            "chat_id": chat_id,
-            "text": text
-        },
-        timeout=20
-    )
-
-@app.route("/receiveUpdate", methods=["POST"])
-def receive_update():
-    data = request.json
-    print(data)
-
-if data["update"]["type"] == "NewMessage":
-    chat_id = data["update"]["chat_id"]
-
-    if chat_id.startswith("b0"):
-        send_message(chat_id d, chat_id, text):
-    url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
-
     r = requests.post(
         url,
         json={
@@ -41,7 +20,19 @@ if data["update"]["type"] == "NewMessage":
 
     print(r.text)
 
+@app.route("/receiveUpdate", methods=["POST"])
+def receive_update():
+    data = request.json
+    print(data)
+
+    if data["update"]["type"] == "NewMessage":
+        chat_id = data["update"]["chat_id"]
+
+        if chat_id.startswith("b0"):
+            send_message(chat_id, "سلام 👋")
+
     return {"ok": True}
+
 @app.route("/")
 def home():
     return "ONLINE"
