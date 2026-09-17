@@ -27,10 +27,19 @@ def receive_update():
         chat_id = data["update"]["chat_id"]
 
         if chat_id == "g0IZ3is000677376b8e6cfd1eec21a99":
-            send_message(
-                chat_id,
-                "✅ پیام گروه دریافت شد"
-            )
+def send_message(chat_id, text):
+    url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
+
+    r = requests.post(
+        url,
+        json={
+            "chat_id": chat_id,
+            "text": text
+        },
+        timeout=20
+    )
+
+    print(r.text)
 
     return {"ok": True}
 @app.route("/")
