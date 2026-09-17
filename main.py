@@ -58,31 +58,29 @@ def main_menu(chat_id):
 
 لطفاً یکی از گزینه‌های زیر را انتخاب کنید:"""
 
-keypad = {
-    "rows": [
-        {
-            "buttons": [
-                {
-                    "button_type": "Simple",
-                    "button_text": "🎫 پشتیبانی"
-                },
-                {
-                    "button_type": "Simple",
-                    "button_text": "🚨 گزارش تخلف"
-                }
-            ]
-        },
-        {
-            "buttons": [
-                {
-                    "button_type": "Simple",
-                    "button_text": "👥 درخواست عضوگیری"
-                }
-            ]
-        }
-    ]
-}
-        "resize_keyboard": True
+    keypad = {
+        "rows": [
+            {
+                "buttons": [
+                    {
+                        "button_type": "Simple",
+                        "button_text": "🎫 پشتیبانی"
+                    },
+                    {
+                        "button_type": "Simple",
+                        "button_text": "🚨 گزارش تخلف"
+                    }
+                ]
+            },
+            {
+                "buttons": [
+                    {
+                        "button_type": "Simple",
+                        "button_text": "👥 درخواست عضوگیری"
+                    }
+                ]
+            }
+        ]
     }
 
     send_message(
