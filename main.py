@@ -12,12 +12,12 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 ADMIN_GROUP_ID = "g0IZ3is000677376b8e6cfd1eec21a99"
 
-
 # =========================
 # ارسال پیام
 # =========================
 
 def send_message(chat_id, text, chat_keypad=None, inline_keypad=None):
+
     url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
 
     data = {
@@ -33,18 +33,20 @@ def send_message(chat_id, text, chat_keypad=None, inline_keypad=None):
         data["inline_keypad"] = inline_keypad
 
     try:
+
         response = requests.post(
             url,
             json=data,
             timeout=20
         )
 
-        print("SEND MESSAGE:", response.status_code)
-        print(response.text)
+        print("SEND MESSAGE STATUS:", response.status_code)
+        print("SEND MESSAGE RESPONSE:", response.text)
 
         return response.json()
 
     except Exception as e:
+
         print("SEND MESSAGE ERROR:", e)
         return None
 
@@ -54,6 +56,7 @@ def send_message(chat_id, text, chat_keypad=None, inline_keypad=None):
 # =========================
 
 def main_menu(chat_id):
+
     text = """🐺 به ربات DISCORT_WOLFS خوش آمدید
 
 لطفاً یکی از گزینه‌های زیر را انتخاب کنید:"""
@@ -83,11 +86,10 @@ def main_menu(chat_id):
         ]
     }
 
-def handle_start(chat_id):
-
     send_message(
         chat_id,
-        "سلام تست ربات"
+        text,
+        chat_keypad=keypad
     )
 
 
@@ -96,6 +98,7 @@ def handle_start(chat_id):
 # =========================
 
 def handle_start(chat_id):
+
     main_menu(chat_id)
 
 
@@ -108,10 +111,10 @@ def receive_update():
 
     data = request.json
 
-    print("====================================")
+    print("=" * 50)
     print("NEW UPDATE:")
     print(data)
-    print("====================================")
+    print("=" * 50)
 
     try:
 
@@ -119,7 +122,6 @@ def receive_update():
 
         update_type = update.get("type")
 
-        # فقط پیام جدید
         if update_type == "NewMessage":
 
             chat_id = update.get("chat_id")
@@ -142,7 +144,7 @@ def receive_update():
                 handle_start(chat_id)
 
             # =========================
-            # دکمه پشتیبانی
+            # پشتیبانی
             # =========================
 
             elif text == "🎫 پشتیبانی":
@@ -153,7 +155,7 @@ def receive_update():
                 )
 
             # =========================
-            # دکمه گزارش تخلف
+            # گزارش تخلف
             # =========================
 
             elif text == "🚨 گزارش تخلف":
@@ -164,19 +166,18 @@ def receive_update():
                 )
 
             # =========================
-            # دکمه عضوگیری
+            # عضوگیری
             # =========================
 
             elif text == "👥 درخواست عضوگیری":
 
                 send_message(
                     chat_id,
-                    "👥 درخواست عضوگیری\n\n"
-                    "برای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
+                    "👥 درخواست عضوگیری\n\nبرای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
                 )
 
             # =========================
-            # دکمه‌های شناسه‌دار
+            # دکمه های دارای ID
             # =========================
 
             button_id = aux_data.get("button_id")
@@ -196,16 +197,14 @@ def receive_update():
 
                     send_message(
                         chat_id,
-                        "🚨 بخش گزارش تخلف\n\n"
-                        "👤 لطفاً اسم فرد متخلف را ارسال کنید."
+                        "🚨 بخش گزارش تخلف\n\n👤 لطفاً اسم فرد متخلف را ارسال کنید."
                     )
 
                 elif button_id == "recruitment":
 
                     send_message(
                         chat_id,
-                        "👥 درخواست عضوگیری\n\n"
-                        "برای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
+                        "👥 درخواست عضوگیری\n\nبرای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
                     )
 
         return {"ok": True}
@@ -221,7 +220,7 @@ def receive_update():
 
 
 # =========================
-# صفحه اصلی
+# صفحه تست
 # =========================
 
 @app.route("/")
@@ -230,7 +229,7 @@ def home():
 
 
 # =========================
-# اجرای برنامه
+# اجرا
 # =========================
 
 if __name__ == "__main__":
