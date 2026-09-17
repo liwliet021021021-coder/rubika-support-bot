@@ -83,10 +83,11 @@ def main_menu(chat_id):
         ]
     }
 
+def handle_start(chat_id):
+
     send_message(
         chat_id,
-        text,
-        chat_keypad=keypad
+        "سلام تست ربات"
     )
 
 
