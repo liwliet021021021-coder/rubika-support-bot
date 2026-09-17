@@ -26,6 +26,7 @@ def send_message(chat_id, text, chat_keypad=None, inline_keypad=None):
     }
 
     if chat_keypad:
+        data["chat_keypad_type"] = "New"
         data["chat_keypad"] = chat_keypad
 
     if inline_keypad:
@@ -57,32 +58,30 @@ def main_menu(chat_id):
 
 لطفاً یکی از گزینه‌های زیر را انتخاب کنید:"""
 
-    keypad = {
-        "rows": [
-            {
-                "buttons": [
-                    {
-                        "id": "support",
-                        "type": "Simple",
-                        "button_text": "🎫 پشتیبانی"
-                    },
-                    {
-                        "id": "report",
-                        "type": "Simple",
-                        "button_text": "🚨 گزارش تخلف"
-                    }
-                ]
-            },
-            {
-                "buttons": [
-                    {
-                        "id": "recruitment",
-                        "type": "Simple",
-                        "button_text": "👥 درخواست عضوگیری"
-                    }
-                ]
-            }
-        ],
+keypad = {
+    "rows": [
+        {
+            "buttons": [
+                {
+                    "button_type": "Simple",
+                    "button_text": "🎫 پشتیبانی"
+                },
+                {
+                    "button_type": "Simple",
+                    "button_text": "🚨 گزارش تخلف"
+                }
+            ]
+        },
+        {
+            "buttons": [
+                {
+                    "button_type": "Simple",
+                    "button_text": "👥 درخواست عضوگیری"
+                }
+            ]
+        }
+    ]
+}
         "resize_keyboard": True
     }
 
