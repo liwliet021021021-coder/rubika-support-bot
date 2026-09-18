@@ -16,7 +16,7 @@ ADMIN_GROUP_ID = "g0IZ3is000677376b8e6cfd1eec21a99"
 # ارسال پیام
 # =========================
 
-def send_message(chat_id, text, chat_keypad=None, inline_keypad=None):
+def send_message(print(data)):
 
     url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
 
