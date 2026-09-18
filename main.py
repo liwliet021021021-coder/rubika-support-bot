@@ -7,129 +7,88 @@ app = Flask(__name__)
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # =========================
-# تنظیمات
+# Send Message
 # =========================
 
-ADMIN_GROUP_ID = "g0IZ3is000677376b8e6cfd1eec21a99"
-
-# =========================
-# ارسال پیام
-# =========================
-
-def send_message(print(data)):
+def send_message(chat_id, text, keypad=None):
 
     url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
 
-    data = {
+    payload = {
         "chat_id": chat_id,
         "text": text
     }
 
-    if chat_keypad:
-        data["chat_keypad_type"] = "New"
-        data["chat_keypad"] = chat_keypad
+    if keypad:
+        payload["chat_keypad_type"] = "New"
+        payload["chat_keypad"] = keypad
 
-    if inline_keypad:
-        data["inline_keypad"] = inline_keypad
+    print("SEND DATA:", payload)
 
     try:
 
-        response = requests.post(
+        r = requests.post(
             url,
-            json=data,
+            json=payload,
             timeout=20
         )
 
-        print("SEND MESSAGE STATUS:", response.status_code)
-        print("SEND MESSAGE RESPONSE:", response.text)
+        print("STATUS:", r.status_code)
+        print("RESPONSE:", r.text)
 
-        return response.json()
+        return r.json()
 
     except Exception as e:
 
-        print("SEND MESSAGE ERROR:", e)
+        print("SEND ERROR:", e)
         return None
 
 
 # =========================
-# منوی اصلی
+# Main Menu
 # =========================
 
-from flask import Flask, request
-import requests
-import os
+def show_main_menu(chat_id):
 
-app = Flask(__name__)
-
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-
-# =========================
-# تنظیمات
-# =========================
-
-ADMIN_GROUP_ID = "g0IZ3is000677376b8e6cfd1eec21a99"
-
-# =========================
-# ارسال پیام
-# =========================
-
-def send_message(chat_id, text, chat_keypad=None, inline_keypad=None):
-
-    url = f"https://botapi.rubika.ir/v3/{BOT_TOKEN}/sendMessage"
-
-    data = {
-        "chat_id": chat_id,
-        "text": text
+    keypad = {
+        "rows": [
+            {
+                "buttons": [
+                    {
+                        "id": "support",
+                        "type": "Simple",
+                        "button_text": "🎫 پشتیبانی"
+                    },
+                    {
+                        "id": "report",
+                        "type": "Simple",
+                        "button_text": "🚨 گزارش تخلف"
+                    }
+                ]
+            },
+            {
+                "buttons": [
+                    {
+                        "id": "recruitment",
+                        "type": "Simple",
+                        "button_text": "👥 درخواست عضوگیری"
+                    }
+                ]
+            }
+        ],
+        "resize_keyboard": True,
+        "on_time_keyboard": False
     }
-
-    if chat_keypad:
-        data["chat_keypad_type"] = "New"
-        data["chat_keypad"] = chat_keypad
-
-    if inline_keypad:
-        data["inline_keypad"] = inline_keypad
-
-    try:
-
-        response = requests.post(
-            url,
-            json=data,
-            timeout=20
-        )
-
-        print("SEND MESSAGE STATUS:", response.status_code)
-        print("SEND MESSAGE RESPONSE:", response.text)
-
-        return response.json()
-
-    except Exception as e:
-
-        print("SEND MESSAGE ERROR:", e)
-        return None
-
-
-# =========================
-# منوی اصلی
-# =========================
-
-def handle_start(chat_id):
 
     send_message(
         chat_id,
-        "ربات روشن است ✅"
+        "🐺 به ربات DISCORT_WOLFS خوش آمدید\n\nیکی از گزینه‌ها را انتخاب کنید:",
+        keypad
     )
 
-# =========================
-# شروع ربات
-# =========================
-
-def handle_start(chat_id):
-
-    main_menu(chat_id)
-
 
 # =========================
-# دریافت آپدیت
+# Webhook
 # =========================
 
 @app.route("/receiveUpdate", methods=["POST"])
@@ -138,7 +97,6 @@ def receive_update():
     data = request.json
 
     print("=" * 50)
-    print("NEW UPDATE:")
     print(data)
     print("=" * 50)
 
@@ -146,98 +104,59 @@ def receive_update():
 
         update = data.get("update", {})
 
-        update_type = update.get("type")
+        if update.get("type") != "NewMessage":
+            return {"ok": True}
 
-        if update_type == "NewMessage":
+        chat_id = update.get("chat_id")
 
-            chat_id = update.get("chat_id")
+        message = update.get("new_message", {})
 
-            new_message = update.get("new_message", {})
+        text = message.get("text", "")
 
-            text = new_message.get("text", "")
-            aux_data = update.get("aux_data", {})
+        aux_data = update.get("aux_data", {})
 
-            print("CHAT ID:", chat_id)
-            print("TEXT:", text)
-            print("AUX DATA:", aux_data)
+        print("CHAT:", chat_id)
+        print("TEXT:", text)
+        print("AUX:", aux_data)
 
-            # =========================
-            # /start
-            # =========================
+        # start command
 
-            if text == "/start":
+        if text == "/start":
 
-                handle_start(chat_id)
+            show_main_menu(chat_id)
 
-            # =========================
-            # پشتیبانی
-            # =========================
+            return {"ok": True}
 
-            elif text == "🎫 پشتیبانی":
+        # button click
 
-                send_message(
-                    chat_id,
-                    "🎫 بخش پشتیبانی\n\n📝 موضوع خود را مطرح کنید."
-                )
+        button_id = aux_data.get("button_id")
 
-            # =========================
-            # گزارش تخلف
-            # =========================
+        if button_id == "support":
 
-            elif text == "🚨 گزارش تخلف":
+            send_message(
+                chat_id,
+                "🎫 بخش پشتیبانی\n\nپیام خود را ارسال کنید."
+            )
 
-                send_message(
-                    chat_id,
-                    "🚨 بخش گزارش تخلف\n\n👤 لطفاً اسم فرد متخلف را ارسال کنید."
-                )
+        elif button_id == "report":
 
-            # =========================
-            # عضوگیری
-            # =========================
+            send_message(
+                chat_id,
+                "🚨 بخش گزارش تخلف\n\nاطلاعات تخلف را ارسال کنید."
+            )
 
-            elif text == "👥 درخواست عضوگیری":
+        elif button_id == "recruitment":
 
-                send_message(
-                    chat_id,
-                    "👥 درخواست عضوگیری\n\nبرای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
-                )
-
-            # =========================
-            # دکمه های دارای ID
-            # =========================
-
-            button_id = aux_data.get("button_id")
-
-            if button_id:
-
-                print("BUTTON ID:", button_id)
-
-                if button_id == "support":
-
-                    send_message(
-                        chat_id,
-                        "🎫 بخش پشتیبانی\n\n📝 موضوع خود را مطرح کنید."
-                    )
-
-                elif button_id == "report":
-
-                    send_message(
-                        chat_id,
-                        "🚨 بخش گزارش تخلف\n\n👤 لطفاً اسم فرد متخلف را ارسال کنید."
-                    )
-
-                elif button_id == "recruitment":
-
-                    send_message(
-                        chat_id,
-                        "👥 درخواست عضوگیری\n\nبرای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
-                    )
+            send_message(
+                chat_id,
+                "👥 درخواست عضوگیری\n\nدرخواست خود را ارسال کنید."
+            )
 
         return {"ok": True}
 
     except Exception as e:
 
-        print("UPDATE ERROR:", e)
+        print("ERROR:", e)
 
         return {
             "ok": False,
@@ -245,165 +164,11 @@ def receive_update():
         }
 
 
-# =========================
-# صفحه تست
-# =========================
-
 @app.route("/")
 def home():
+
     return "ONLINE"
 
-
-# =========================
-# اجرا
-# =========================
-
-if __name__ == "__main__":
-
-    app.run(
-        host="0.0.0.0",
-        port=8080
-    )
-
-
-# =========================
-# شروع ربات
-# =========================
-
-def handle_start(chat_id):
-
-    main_menu(chat_id)
-
-
-# =========================
-# دریافت آپدیت
-# =========================
-
-@app.route("/receiveUpdate", methods=["POST"])
-def receive_update():
-
-    data = request.json
-
-    print("=" * 50)
-    print("NEW UPDATE:")
-    print(data)
-    print("=" * 50)
-
-    try:
-
-        update = data.get("update", {})
-
-        update_type = update.get("type")
-
-        if update_type == "NewMessage":
-
-            chat_id = update.get("chat_id")
-
-            new_message = update.get("new_message", {})
-
-            text = new_message.get("text", "")
-            aux_data = update.get("aux_data", {})
-
-            print("CHAT ID:", chat_id)
-            print("TEXT:", text)
-            print("AUX DATA:", aux_data)
-
-            # =========================
-            # /start
-            # =========================
-
-            if text == "/start":
-
-                handle_start(chat_id)
-
-            # =========================
-            # پشتیبانی
-            # =========================
-
-            elif text == "🎫 پشتیبانی":
-
-                send_message(
-                    chat_id,
-                    "🎫 بخش پشتیبانی\n\n📝 موضوع خود را مطرح کنید."
-                )
-
-            # =========================
-            # گزارش تخلف
-            # =========================
-
-            elif text == "🚨 گزارش تخلف":
-
-                send_message(
-                    chat_id,
-                    "🚨 بخش گزارش تخلف\n\n👤 لطفاً اسم فرد متخلف را ارسال کنید."
-                )
-
-            # =========================
-            # عضوگیری
-            # =========================
-
-            elif text == "👥 درخواست عضوگیری":
-
-                send_message(
-                    chat_id,
-                    "👥 درخواست عضوگیری\n\nبرای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
-                )
-
-            # =========================
-            # دکمه های دارای ID
-            # =========================
-
-            button_id = aux_data.get("button_id")
-
-            if button_id:
-
-                print("BUTTON ID:", button_id)
-
-                if button_id == "support":
-
-                    send_message(
-                        chat_id,
-                        "🎫 بخش پشتیبانی\n\n📝 موضوع خود را مطرح کنید."
-                    )
-
-                elif button_id == "report":
-
-                    send_message(
-                        chat_id,
-                        "🚨 بخش گزارش تخلف\n\n👤 لطفاً اسم فرد متخلف را ارسال کنید."
-                    )
-
-                elif button_id == "recruitment":
-
-                    send_message(
-                        chat_id,
-                        "👥 درخواست عضوگیری\n\nبرای شروع درخواست عضویت، قوانین کلن را مطالعه کنید."
-                    )
-
-        return {"ok": True}
-
-    except Exception as e:
-
-        print("UPDATE ERROR:", e)
-
-        return {
-            "ok": False,
-            "error": str(e)
-        }
-
-
-# =========================
-# صفحه تست
-# =========================
-
-@app.route("/")
-def home():
-    return "ONLINE"
-
-
-# =========================
-# اجرا
-# =========================
 
 if __name__ == "__main__":
 
