@@ -112,43 +112,12 @@ def send_message(chat_id, text, chat_keypad=None, inline_keypad=None):
 # منوی اصلی
 # =========================
 
-def main_menu(chat_id):
-
-    text = """🐺 به ربات DISCORT_WOLFS خوش آمدید
-
-لطفاً یکی از گزینه‌های زیر را انتخاب کنید:"""
-
-    keypad = {
-        "rows": [
-            {
-                "buttons": [
-                    {
-                        "button_type": "Simple",
-                        "button_text": "🎫 پشتیبانی"
-                    },
-                    {
-                        "button_type": "Simple",
-                        "button_text": "🚨 گزارش تخلف"
-                    }
-                ]
-            },
-            {
-                "buttons": [
-                    {
-                        "button_type": "Simple",
-                        "button_text": "👥 درخواست عضوگیری"
-                    }
-                ]
-            }
-        ]
-    }
+def handle_start(chat_id):
 
     send_message(
         chat_id,
-        text,
-        chat_keypad=keypad
+        "ربات روشن است ✅"
     )
-
 
 # =========================
 # شروع ربات
